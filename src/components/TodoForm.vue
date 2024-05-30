@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit(onSubmit)">
+  <form @submit.prevent="submitForm" class="add-form">
     <div>
       <label for="title">Title</label>
       <input
@@ -9,7 +9,7 @@
         placeholder="Task title"
         required
       />
-      <span v-if="errors.title">{{ errors.title.message }}</span>
+      <span v-if="errors.title">{{ errors.title }}</span>
     </div>
     <div>
       <label for="email">Email</label>
@@ -21,7 +21,7 @@
         placeholder="Email"
         required
       />
-      <span v-if="errors.email">{{ errors.email.message }}</span>
+      <span v-if="errors.email">{{ errors.email }}</span>
     </div>
     <div>
       <label for="text">Text</label>
@@ -51,7 +51,7 @@ const schema = yup.object({
 })
 
 // Используем useForm и useField из vee-validate для управления формой и полями
-const { handleSubmit, errors } = useForm({
+const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: schema,
 })
 
@@ -65,49 +65,15 @@ const onSubmit = (values: { title: string; email: string; text?: string }) => {
     email: values.email,
     text: values.text || '',
   })
-  title.value = ''
-  email.value = ''
-  text.value = ''
+  resetForm()
 }
+
+const submitForm = handleSubmit(onSubmit)
 </script>
-
-<style scoped lang="scss">
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 20px;
-
-  label {
-    margin-bottom: 5px;
-  }
-
-  input,
-  textarea {
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 16px;
-    width: 300px;
-
-    &.is-invalid {
-      border-color: red;
-    }
-  }
-
-  span {
-    color: red;
-    font-size: 14px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-  }
-
-  button {
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
+<style lang="scss">
+.add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 </style>

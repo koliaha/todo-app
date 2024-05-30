@@ -19,7 +19,10 @@ export interface State {
   users: User[]
   currentUser: User | null
   nextTodoId: number
+  isAuthenticated: boolean
 }
+
+const savedUser = localStorage.getItem('currentUser')
 
 export default createStore<State>({
   state: {
@@ -85,8 +88,9 @@ export default createStore<State>({
       { email: 'user@user.com', password: '12345', role: 'user' },
       { email: 'admin@admin.com', password: '67890', role: 'admin' },
     ],
-    currentUser: null,
-    nextTodoId: 4,
+    currentUser: savedUser ? JSON.parse(savedUser) : null,
+    nextTodoId: 9,
+    isAuthenticated: localStorage.getItem('isAuthenticated') === 'true',
   },
   mutations: {
     addTodo(state, todo: { title: string, email: string, text: string }) {
@@ -117,9 +121,13 @@ export default createStore<State>({
     },
     login(state, user: User) {
       state.currentUser = user
+      state.isAuthenticated = true
     },
     logout(state) {
       state.currentUser = null
+      state.isAuthenticated = false
+      localStorage.removeItem('isAuthenticated')
+      localStorage.removeItem('currentUser')
     },
   },
   actions: {
@@ -141,6 +149,7 @@ export default createStore<State>({
       )
       if (user) {
         commit('login', user)
+        return user
       } else {
         throw new Error('Invalid credentials')
       }
@@ -152,8 +161,8 @@ export default createStore<State>({
   getters: {
     todos: (state) => state.todos,
     completedTodos: (state) => state.todos.filter((t) => t.completed),
-    pendingTodos: (state) => state.todos.filter((t) => !t.completed),
-    isAuthenticated: (state) => !!state.currentUser,
+    incompleteTodos: (state) => state.todos.filter((t) => !t.completed),
+    isAuthenticated: (state) => state.isAuthenticated,
     currentUser: (state) => state.currentUser,
   },
 })

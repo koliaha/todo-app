@@ -1,54 +1,74 @@
 <template>
-    <li :class="{ 'todo-item': true, completed: todo.completed }">
-      <input type="checkbox" :checked="todo.completed" @change="toggleTodo(todo.id)" />
-      <span>{{ todo.text }}</span>
-      <button @click="removeTodo(todo.id)">Remove</button>
-    </li>
-  </template>
-  
-  <script setup lang="ts">
-  import { defineProps } from 'vue'
-  import { useStore } from 'vuex'
-  import { State } from '@/store'
-  
-  const props = defineProps<{
-    todo: { id: number; text: string; completed: boolean }
-  }>()
-  
-  const store = useStore<State>()
-  
-  const toggleTodo = (id: number) => {
-    store.dispatch('toggleTodo', id)
+  <li :class="{ 'todo-item': true, completed: todo.completed }">
+    <input
+      type="checkbox"
+      :checked="todo.completed"
+      @change="toggleTodo(todo.id)"
+    />
+    <span>{{ todo.text }}</span>
+    <button @click="removeTodo(todo.id)">Remove</button>
+  </li>
+</template>
+
+<script setup lang="ts">
+import { defineProps } from 'vue'
+import { useStore } from 'vuex'
+import { State } from '@/store'
+
+const props = defineProps<{
+  todo: { id: number; text: string; completed: boolean }
+}>()
+
+const store = useStore<State>()
+
+const toggleTodo = (id: number) => {
+  store.dispatch('toggleTodo', id)
+}
+
+const removeTodo = (id: number) => {
+  store.dispatch('removeTodo', id)
+}
+</script>
+<style lang="scss" >
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-family: 'Roboto', sans-serif;
+  animation: fadeInUp 0.5s ease-in-out;
+  transition: transform 0.3s;
+
+  &.completed span {
+    text-decoration: line-through;
+    color: #888;
   }
-  
-  const removeTodo = (id: number) => {
-    store.dispatch('removeTodo', id)
+  p {
+    color: black;
   }
-  </script>
-  
-  <style scoped lang="scss">
-  .todo-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-  
-    &.completed {
-      text-decoration: line-through;
-    }
-  
-    input[type='checkbox'] {
-      margin-right: 10px;
-    }
-  
-    button {
-      background-color: #f00;
-      color: #fff;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
+  input[type='checkbox'] {
+    margin-right: 1rem;
+    transform: scale(1.5);
+    cursor: pointer;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.7);
     }
   }
-  </style>
-  
+
+  span {
+    flex-grow: 1;
+    font-size: 1.1rem;
+  }
+
+  button {
+    width: auto;
+    padding: 0.5rem 1rem;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+</style>
