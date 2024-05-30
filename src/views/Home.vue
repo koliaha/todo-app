@@ -21,9 +21,16 @@
           <p>ID: {{ todo.id }}</p>
           <p>Title: {{ todo.title }}</p>
           <p>Email: {{ todo.email }}</p>
-          <p>Text: {{ todo.text }}</p>
-          <p>Status: {{ todo.completed ? 'Completed' : 'Pending' }}</p>
-          <button @click="toggleTodo(todo.id)">Toggle Status</button>
+          <p v-if="!todo.editing">Text: {{ todo.text }}</p>
+          <textarea v-else v-model="todo.text"></textarea>
+          <p>
+            Status:
+            <span v-if="!todo.editing">{{ todo.completed ? 'Completed' : 'Pending' }}</span>
+            <input v-else type="checkbox" v-model="todo.completed" />
+          </p>
+          <button @click="toggleTodo(todo.id)" v-if="!todo.editing">Toggle Status</button>
+          <button @click="editTodo(todo)" v-if="!todo.editing && isAdmin">Edit</button>
+          <button @click="saveTodo(todo)" v-if="todo.editing">Save</button>
         </div>
       </div>
       <div class="pagination">
@@ -44,6 +51,7 @@
   
   const currentUser = computed(() => store.getters.currentUser)
   const todos = computed(() => store.getters.todos)
+  const isAdmin = computed(() => currentUser.value?.role === 'admin')
   
   const logout = () => {
     store.dispatch('logout')
@@ -102,6 +110,14 @@
   
   const toggleTodo = (id: number) => {
     store.dispatch('toggleTodo', id)
+  }
+  
+  const editTodo = (todo: any) => {
+    todo.editing = true
+  }
+  
+  const saveTodo = (todo: any) => {
+    store.dispatch('updateTodo', { ...todo, editing: false })
   }
   </script>
   
