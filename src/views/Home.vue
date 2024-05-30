@@ -12,10 +12,11 @@
         <option value="completed">Completed</option>
         <option value="incomplete">Incomplete</option>
       </select>
-      <button @click="sort('id')">Sort by ID</button>
+      <button @click="sortById = !sortById" :class="sortById && 'isActive'">Sort by ID</button>
+      <button @click="formAdd = !formAdd" class="add" :class="formAdd && 'isActive'">+</button>
     </div>
 
-    <TodoForm />
+    <TodoForm class="" v-if="formAdd" />
     <h2 class="todo-title">Todo List</h2>
     <div class="todo-list">
       <div v-for="todo in paginatedTodos" :key="todo.id" class="todo-item">
@@ -59,7 +60,8 @@ const router = useRouter()
 const currentUser = computed(() => store.getters.currentUser)
 const todos = computed(() => store.getters.todos)
 const isAdmin = computed(() => currentUser.value?.role === 'admin')
-
+const formAdd = ref(false)
+const sortById = ref(false)
 const logout = () => {
   store.dispatch('logout')
   router.push({ name: 'Login' })
@@ -87,12 +89,14 @@ const filteredTodos = computed(() => {
 })
 
 const sortedTodos = computed(() => {
-  return [...filteredTodos.value].sort((a, b) => {
-    if (sortKey.value === 'id') {
-      return a.id - b.id
-    }
-    return 0
-  })
+  return !sortById.value
+    ? filteredTodos.value
+    : [...filteredTodos.value].sort((a, b) => {
+        if (sortKey.value === 'id') {
+          return a.id - b.id
+        }
+        return 0
+      })
 })
 
 const paginatedTodos = computed(() => {
@@ -138,6 +142,7 @@ const saveTodo = (todo: any) => {
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  min-height: 100vh;
   position: relative;
   background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
   animation: fadeIn 1s ease-in-out;
@@ -167,6 +172,11 @@ const saveTodo = (todo: any) => {
     gap: 10px;
     align-items: center;
   }
+  .add {
+    border-radius: 50%;
+    width: 42px;
+    min-width: 42px;
+  }
   h1 {
     font-size: 2.5rem;
     color: #fff;
@@ -183,6 +193,11 @@ const saveTodo = (todo: any) => {
   textarea,
   select {
     margin: 0;
+  }
+  button{
+    &.isActive{
+        background: green;
+    }
   }
   .pagination {
     display: flex;

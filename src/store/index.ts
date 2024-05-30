@@ -28,6 +28,27 @@ export default createStore<State>({
   state: {
     todos: [
       {
+        id: 6,
+        title: 'Task 3',
+        email: 'user@user.com',
+        text: 'Task details 3',
+        completed: false,
+      },
+      {
+        id: 7,
+        title: 'Task 3',
+        email: 'user@user.com',
+        text: 'Task details 3',
+        completed: false,
+      },
+      {
+        id: 8,
+        title: 'Task 3',
+        email: 'user@user.com',
+        text: 'Task details 3',
+        completed: false,
+      },
+      {
         id: 1,
         title: 'Task 1',
         email: 'user@user.com',
@@ -62,27 +83,7 @@ export default createStore<State>({
         text: 'Task details 3',
         completed: false,
       },
-      {
-        id: 6,
-        title: 'Task 3',
-        email: 'user@user.com',
-        text: 'Task details 3',
-        completed: false,
-      },
-      {
-        id: 7,
-        title: 'Task 3',
-        email: 'user@user.com',
-        text: 'Task details 3',
-        completed: false,
-      },
-      {
-        id: 8,
-        title: 'Task 3',
-        email: 'user@user.com',
-        text: 'Task details 3',
-        completed: false,
-      },
+  
     ],
     users: [
       { email: 'user@user.com', password: '12345', role: 'user' },
