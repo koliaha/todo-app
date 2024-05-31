@@ -3,7 +3,6 @@
     <h1>Home</h1>
     <p>Welcome, {{ currentUser?.email }}!</p>
     <button class="logout" @click="logout">Logout</button>
-
     <div class="filters container">
       <input type="text" v-model="filter.title" placeholder="Filter by title" />
       <input type="text" v-model="filter.email" placeholder="Filter by email" />
@@ -12,10 +11,17 @@
         <option value="completed">Completed</option>
         <option value="incomplete">Incomplete</option>
       </select>
-      <button @click="sortById = !sortById" :class="sortById && 'isActive'">Sort by ID</button>
-      <button @click="formAdd = !formAdd" class="add" :class="formAdd && 'isActive'">+</button>
+      <button @click="sortById = !sortById" :class="sortById && 'isActive'">
+        Sort by ID
+      </button>
+      <button
+        @click="formAdd = !formAdd"
+        class="add"
+        :class="formAdd && 'isActive'"
+      >
+        +
+      </button>
     </div>
-
     <TodoForm v-if="formAdd" />
     <TodoList :filter="filter" :sortById="sortById" />
   </div>
@@ -49,7 +55,6 @@ const filter = ref({
 </script>
 <style lang="scss">
 @import '../assets/main.scss';
-
 .home {
   display: flex;
   flex-direction: column;
@@ -68,23 +73,37 @@ const filter = ref({
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 2rem;
+    @media screen and (max-width: 550px) {
+      gap: 1rem;
+    }
   }
   .todo-item {
     background: white;
     padding: 1rem;
     border-radius: 20px;
+    @media screen and (max-width: 550px) {
+      width: 100%;
+    }
   }
   .logout {
     position: absolute;
     right: 2rem;
     top: 2rem;
     width: 250px;
+    @media screen and (max-width: 550px) {
+      width: 100px;
+      right: 1rem;
+      top: 1rem;
+    }
   }
   .filters {
     max-width: 670px;
     display: flex;
     gap: 10px;
     align-items: center;
+    @media screen and (max-width: 550px) {
+      flex-direction: column;
+    }
   }
   .add {
     border-radius: 50%;
@@ -102,6 +121,10 @@ const filter = ref({
     font-size: 1.25rem;
     color: #fff;
     margin-bottom: 2rem;
+    @media screen and (max-width: 550px) {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
   }
   input,
   textarea,

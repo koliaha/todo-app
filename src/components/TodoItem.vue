@@ -47,7 +47,6 @@ const saveTodo = () => {
 .todo-item {
   border: 1px solid #ccc;
   padding: 1rem;
-  margin-bottom: 1rem;
   border-radius: 8px;
 }
 </style>
