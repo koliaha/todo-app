@@ -153,6 +153,12 @@ span {
 .todo-item {
   p {
     color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  span {
+    margin: 0;
   }
 }
 @keyframes fadeInUp {

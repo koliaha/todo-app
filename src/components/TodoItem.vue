@@ -1,74 +1,53 @@
 <template>
-  <li :class="{ 'todo-item': true, completed: todo.completed }">
-    <input
-      type="checkbox"
-      :checked="todo.completed"
-      @change="toggleTodo(todo.id)"
-    />
-    <span>{{ todo.text }}</span>
-    <button @click="removeTodo(todo.id)">Remove</button>
-  </li>
+  <div class="todo-item">
+    <p>ID: {{ todo.id }}</p>
+    <p>Title: {{ todo.title }}</p>
+    <p>Email: {{ todo.email }}</p>
+    <p v-if="!isEditing">Text: {{ todo.text }}</p>
+    <textarea v-else v-model="localTodo.text"></textarea>
+    <p>
+      Status:
+      <span v-if="!isEditing">{{
+        todo.completed ? 'Completed' : 'Incomplete'
+      }}</span>
+      <input v-else type="checkbox" v-model="localTodo.completed" />
+    </p>
+    <button @click="editTodo" v-if="!isEditing && isAdmin">Edit</button>
+    <button @click="saveTodo" v-if="isEditing">Save</button>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { ref, computed, defineProps } from 'vue'
 import { useStore } from 'vuex'
-import { State } from '@/store'
+import { Todo } from '../interfaces'
 
 const props = defineProps<{
-  todo: { id: number; text: string; completed: boolean }
+  todo: Todo
 }>()
 
-const store = useStore<State>()
+const store = useStore()
 
-const toggleTodo = (id: number) => {
-  store.dispatch('toggleTodo', id)
+const isAdmin = computed(() => store.getters.currentUser?.role === 'admin')
+const isEditing = ref(false)
+
+const localTodo = ref({ ...props.todo })
+
+const editTodo = () => {
+  isEditing.value = true
 }
 
-const removeTodo = (id: number) => {
-  store.dispatch('removeTodo', id)
+const saveTodo = () => {
+  store.dispatch('updateTodo', { ...localTodo.value, editing: false })
+  isEditing.value = false
 }
 </script>
-<style lang="scss" >
+
+<style scoped>
 .todo-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 1rem;
   margin-bottom: 1rem;
-  font-family: 'Roboto', sans-serif;
-  animation: fadeInUp 0.5s ease-in-out;
-  transition: transform 0.3s;
-
-  &.completed span {
-    text-decoration: line-through;
-    color: #888;
-  }
-  p {
-    color: black;
-  }
-  input[type='checkbox'] {
-    margin-right: 1rem;
-    transform: scale(1.5);
-    cursor: pointer;
-    transition: transform 0.3s;
-
-    &:hover {
-      transform: scale(1.7);
-    }
-  }
-
-  span {
-    flex-grow: 1;
-    font-size: 1.1rem;
-  }
-
-  button {
-    width: auto;
-    padding: 0.5rem 1rem;
-  }
-
-  &:hover {
-    transform: translateY(-5px);
-  }
+  border-radius: 8px;
 }
 </style>

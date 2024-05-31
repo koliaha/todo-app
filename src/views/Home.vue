@@ -16,35 +16,8 @@
       <button @click="formAdd = !formAdd" class="add" :class="formAdd && 'isActive'">+</button>
     </div>
 
-    <TodoForm class="" v-if="formAdd" />
-    <h2 class="todo-title">Todo List</h2>
-    <div class="todo-list">
-      <div v-for="todo in paginatedTodos" :key="todo.id" class="todo-item">
-        <p>ID: {{ todo.id }}</p>
-        <p>Title: {{ todo.title }}</p>
-        <p>Email: {{ todo.email }}</p>
-        <p v-if="!todo.editing">Text: {{ todo.text }}</p>
-        <textarea v-else v-model="todo.text"></textarea>
-        <p>
-          Status:
-          <span v-if="!todo.editing">{{
-            todo.completed ? 'Completed' : 'Incomplete'
-          }}</span>
-          <input v-else type="checkbox" v-model="todo.completed" />
-        </p>
-        <!-- <button @click="toggleTodo(todo.id)" v-if="!todo.editing">
-          Toggle Status
-        </button> -->
-        <button @click="editTodo(todo)" v-if="!todo.editing && isAdmin">
-          Edit
-        </button>
-        <button @click="saveTodo(todo)" v-if="todo.editing">Save</button>
-      </div>
-    </div>
-    <div class="pagination">
-      <button @click="prevPage" :disabled="page === 1">Previous</button>
-      <button @click="nextPage" :disabled="page === totalPages">Next</button>
-    </div>
+    <TodoForm v-if="formAdd" />
+    <TodoList :filter="filter" :sortById="sortById" />
   </div>
 </template>
 
@@ -53,86 +26,27 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import TodoForm from '../components/TodoForm.vue'
+import TodoList from '../components/TodoList.vue'
 
 const store = useStore()
 const router = useRouter()
 
 const currentUser = computed(() => store.getters.currentUser)
-const todos = computed(() => store.getters.todos)
-const isAdmin = computed(() => currentUser.value?.role === 'admin')
+// const isAdmin = computed(() => currentUser.value?.role === 'admin')
 const formAdd = ref(false)
 const sortById = ref(false)
+
 const logout = () => {
   store.dispatch('logout')
   router.push({ name: 'Login' })
 }
+
 const filter = ref({
   title: '',
   email: '',
   status: '',
 })
-const sortKey = ref('id')
-const page = ref(1)
-const pageSize = 3
-
-const filteredTodos = computed(() => {
-  return todos.value.filter((todo) => {
-    return (
-      (!filter.value.title || todo.title.includes(filter.value.title)) &&
-      (!filter.value.email || todo.email.includes(filter.value.email)) &&
-      (!filter.value.status ||
-        (filter.value.status === 'completed'
-          ? todo.completed
-          : !todo.completed))
-    )
-  })
-})
-
-const sortedTodos = computed(() => {
-  return !sortById.value
-    ? filteredTodos.value
-    : [...filteredTodos.value].sort((a, b) => {
-        if (sortKey.value === 'id') {
-          return a.id - b.id
-        }
-        return 0
-      })
-})
-
-const paginatedTodos = computed(() => {
-  const start = (page.value - 1) * pageSize
-  return sortedTodos.value.slice(start, start + pageSize)
-})
-
-const totalPages = computed(() => {
-  return Math.ceil(sortedTodos.value.length / pageSize)
-})
-
-const nextPage = () => {
-  if (page.value < totalPages.value) {
-    page.value++
-  }
-}
-
-const prevPage = () => {
-  if (page.value > 1) {
-    page.value--
-  }
-}
-
-// const toggleTodo = (id: number) => {
-//   store.dispatch('toggleTodo', id)
-// }
-
-const editTodo = (todo: any) => {
-  todo.editing = true
-}
-
-const saveTodo = (todo: any) => {
-  store.dispatch('updateTodo', { ...todo, editing: false })
-}
 </script>
-
 <style lang="scss">
 @import '../assets/main.scss';
 
@@ -194,9 +108,9 @@ const saveTodo = (todo: any) => {
   select {
     margin: 0;
   }
-  button{
-    &.isActive{
-        background: green;
+  button {
+    &.isActive {
+      background: green;
     }
   }
   .pagination {
